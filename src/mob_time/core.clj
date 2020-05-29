@@ -7,7 +7,7 @@
   [& args]
   (println "Hello, World!"))
 
-(defn timeLeftInMillis [url]
+(defn timeLeftInMillis [url mob]
   (clojure.core/get
-   (json/parse-string (:body (http-client/get (str url "/fwg/status"))))
+   (json/parse-string (:body (http-client/get (str url "/" mob "/status"))))
    "timeLeftInMillis"))
