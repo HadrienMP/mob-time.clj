@@ -14,7 +14,4 @@
     "timeLeftInMillis"))
 
 (defn timeLeft [body]
-  (if (includes? body "10000")
-    "10s"
-    "0s")
-  )
+  (str (/ (clojure.core/get (json/parse-string body) "timeLeftInMillis") 1000) "s"))
