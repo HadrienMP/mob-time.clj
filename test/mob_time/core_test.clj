@@ -2,14 +2,15 @@
   (:require [clojure.test :refer :all]
             [mob-time.core :refer :all]
             [cheshire.core :as json :refer :all]
-            [clj-http.client :refer :all]))
+            [clj-http.client :as http-client :refer :all]))
 
-(def timeLeftInMillis [url]
-  (json/parse-string
-    (:body (clj-http.client/get (str mob-url "/fwg/status"))))
-  )
+(defn timeLeftInMillis [url]
+  (clojure.core/get
+    (json/parse-string (:body (http-client/get (str url "/fwg/status"))))
+    "timeLeftInMillis"))
+
 (deftest a-test
   (testing "FIXME, I fail."
-    (is (= 1 (timeLeftInMillis "https://mob-time-server.herokuapp.com")))))
+    (is (= 0 (timeLeftInMillis "https://mob-time-server.herokuapp.com")))))
 ; https://mob-time-server.herokuapp.com/fwg/status
-; {"lengthInMinutes":4,"timeLeftInMillis":90200,"pomodoro":{"ratio":0.6497}
+; {"lengthInMinutes":4,"timeLeftInMillis":90200,"pomodoro":{lein te"ratio":0.6497}
