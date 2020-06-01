@@ -1,8 +1,8 @@
 (ns mob-time.core
-  (:require [cheshire.core :as json :refer [parse-string]]
+  (:require [cheshire.core :refer [parse-string]]
             [clojure.core :as core :refer :all]
             [clojure.math.numeric-tower :refer :all]
-            [clj-http.client :as http :refer [get]]))
+            [clj-http.client :as http]))
 
 (defn -main
   "I don't do a whole lot ... yet."
@@ -10,12 +10,12 @@
   (println "Hello, World!"))
 
 (defn getTimeLeftInMillis [url mob]
-  (core/get
-    (json/parse-string (:body (http/get (str url "/" mob "/status"))))
+  (get
+    (parse-string (:body (http/get (str url "/" mob "/status"))))
     "timeLeftInMillis"))
 
 (defn timeLeftInMillis [json]
- (core/get (json/parse-string json) "timeLeftInMillis"))
+ (get (parse-string json) "timeLeftInMillis"))
 
 (defn timeLeft [body]
   (let [time-left (timeLeftInMillis body)]
