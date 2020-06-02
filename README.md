@@ -28,6 +28,8 @@ FIXME: listing of options this app accepts.
 ### That You Think
 ### Might be Useful
 
+InfiniTest Vim : :autocmd bufWritePost * !./test.sh
+
 ## License
 
 Copyright © 2020 FIXME
