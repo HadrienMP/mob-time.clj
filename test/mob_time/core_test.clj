@@ -1,23 +1,27 @@
 (ns mob-time.core-test
   (:require [clojure.test :refer :all]
             [mob-time.core :refer :all]))
+(defn build-response [timeLeftInMillis]
+  (str "{\"lengthInMinutes\":4,\"timeLeftInMillis\":" timeLeftInMillis ",\"pomodoro\":{\"ratio\":0.6497}}"))
 
 (deftest timeLeft-test
   (testing "Dangerous"
-    (is (= 0
-           (getTimeLeftInMillis "https://mob-time-server.herokuapp.com" "fwg"))))
+    (is (= 0 (getTimeLeftInMillis "https://mob-time-server.herokuapp.com" "fwg"))))
+ 
   (testing "is 0s when out of time ?"
-    (is (= "0s"
-           (timeLeft "{\"lengthInMinutes\":4,\"timeLeftInMillis\":0,\"pomodoro\":{\"ratio\":0.6497}}"))))
+    (is (= "0s" (timeLeft (build-response "0")))))
   (testing "is 10s"
-           (is (= "10s"
-                  (timeLeft "{\"lengthInMinutes\":4,\"timeLeftInMillis\":10000,\"pomodoro\":{\"ratio\":0.6497}}"))))
+    (is (= "10s" (timeLeft (build-response "10000")))))
   (testing "is 1s for 500ms"
-           (is (= "1s"
-                  (timeLeft "{\"lengthInMinutes\":4,\"timeLeftInMillis\":500,\"pomodoro\":{\"ratio\":0.6497}}"))))
+    (is (= "1s" (timeLeft (build-response "500")))))
   (testing "is 1m for 60000ms"
-           (is (= "1m"
-                  (timeLeft "{\"lengthInMinutes\":4,\"timeLeftInMillis\":60000,\"pomodoro\":{\"ratio\":0.6497}}"))))
-  )
-; https://mob-time-server.herokuapp.com/fwg/status
-; {"lengthInMinutes":4,"timeLeftInMillis":90200,"pomodoro":{lein te"ratio":0.6497}
+    (is (= "1m" (timeLeft (build-response "60000")))))
+  (testing "is 1m for 70000ms"
+    (is (= "1m" (timeLeft (build-response "70000")))))
+  (testing "is 2m for 120000ms"
+    (is (= "2m" (timeLeft (build-response "120000")))))
+  (testing "is 2m for 130000ms"
+    (is (= "2m" (timeLeft (build-response "130000")))))
+  (testing "is 2m for 130500ms"
+    (is (= "2m" (timeLeft (build-response "130500")))))
+)
