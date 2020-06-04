@@ -2,17 +2,11 @@
   (:require [cheshire.core :refer [parse-string]]
             [clojure.core :as core :refer :all]
             [clojure.math.numeric-tower :refer :all]
-            [clj-http.client :as http]))
+            [clj-http.client :as http]
+            [clojure.java.shell :as shell]))
 
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (println "Hello, World!"))
-
-(defn getTimeLeftInMillis [url mob]
-  (get
-    (parse-string (:body (http/get (str url "/" mob "/status"))))
-    "timeLeftInMillis"))
+(defn call [url mob]
+   (:body (http/get (str url "/" mob "/status"))))
 
 (defn timeLeftInMillis [json]
  (get (parse-string json) "timeLeftInMillis"))
@@ -22,3 +16,13 @@
     (if (>= seconds 60)
      (str (int (/ seconds 60)) "m")
      (str (ceil seconds) "s"))))
+(defn clear []
+  (->> (shell/sh "/bin/sh" "-c" "clear <  /dev/null") :out println))
+(defn -main
+  "I don't do a whole lot ... yet."
+  [& args]
+  (future (loop []
+            (clear)
+            (println (timeLeft (call "https://mob-time-server.herokuapp.com" "fwg")))
+            (Thread/sleep 2000) 
+            (recur))))
