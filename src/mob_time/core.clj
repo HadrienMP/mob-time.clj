@@ -1,21 +1,11 @@
 (ns mob-time.core
-  (:require [cheshire.core :refer [parse-string]]
-            [clojure.core :as core :refer :all]
-            [clojure.math.numeric-tower :refer :all]
+  (:require [clojure.core :as core :refer :all]
             [clj-http.client :as http]
-            [clojure.java.shell :as shell]))
+            [clojure.java.shell :as shell]
+            [mob-time.timeLeft :refer :all]))
 
 (defn call [url mob]
    (:body (http/get (str url "/" mob "/status"))))
-
-(defn timeLeftInMillis [json]
- (get (parse-string json) "timeLeftInMillis"))
-
-(defn timeLeft [body]
-  (let [seconds (/ (timeLeftInMillis body) 1000)]
-    (if (>= seconds 60)
-     (str (int (/ seconds 60)) "m")
-     (str (ceil seconds) "s"))))
 
 (defn nextCommand [body previous]
   (let [command (timeLeft body)]
