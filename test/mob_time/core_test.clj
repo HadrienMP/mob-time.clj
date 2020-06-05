@@ -5,9 +5,6 @@
   (str "{\"lengthInMinutes\":4,\"timeLeftInMillis\":" timeLeftInMillis ",\"pomodoro\":{\"ratio\":0.6497}}"))
 
 (deftest timeLeft-test
-  (testing "Dangerous"
-    (is (= 0 (getTimeLeftInMillis "https://mob-time-server.herokuapp.com" "fwg"))))
- 
   (testing "is 0s when out of time ?"
     (is (= "0s" (timeLeft (build-response "0")))))
   (testing "is 10s"
@@ -23,5 +20,13 @@
   (testing "is 2m for 130000ms"
     (is (= "2m" (timeLeft (build-response "130000")))))
   (testing "is 2m for 130500ms"
-    (is (= "2m" (timeLeft (build-response "130500")))))
-)
+    (is (= "2m" (timeLeft (build-response "130500"))))))
+
+(deftest nextCommand-test
+  (testing "next command"
+    (is (= {:command "2m" :last nil} (nextCommand (build-response "120000") {}))))
+  (testing "keep last event"
+    (is (= {:command nil :last "2m"}
+           (->> {}
+                (nextCommand (build-response "120001"))
+                (nextCommand (build-response "120000")))))))

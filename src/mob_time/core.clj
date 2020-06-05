@@ -16,13 +16,22 @@
     (if (>= seconds 60)
      (str (int (/ seconds 60)) "m")
      (str (ceil seconds) "s"))))
+
+(defn nextCommand [body previous]
+  (let [command (timeLeft body)]
+    (if (= command (:command previous))
+           {:command nil :last command}
+           {:command command :last (:command previous)})))
+
 (defn clear []
   (->> (shell/sh "/bin/sh" "-c" "clear <  /dev/null") :out println))
+
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (future (loop []
-            (clear)
-            (println (timeLeft (call "https://mob-time-server.herokuapp.com" "fwg")))
-            (Thread/sleep 2000) 
-            (recur))))
+  (future (loop [previous {}]
+            (let [current (nextCommand (call "https://mob-time-server.herokuapp.com" "fwg") previous)]
+              (if (:command current)
+                (dosync (clear) (println (:command current))))
+              (Thread/sleep 2000) 
+              (recur current)))))
