@@ -5,9 +5,15 @@
 
 (deftest nextCommand-test
   (testing "next command"
-    (is (= {:command "2m" :last nil} (nextCommand (build-response "120000") {}))))
+    (is (= {:command "2m" :last "2m"} (nextCommand (build-response "120000") {}))))
   (testing "keep last event"
     (is (= {:command nil :last "2m"}
            (->> {}
+                (nextCommand (build-response "120001"))
+                (nextCommand (build-response "120000"))))))
+  (testing "keep last event three events"
+    (is (= {:command nil :last "2m"}
+           (->> {}
+                (nextCommand (build-response "120002"))
                 (nextCommand (build-response "120001"))
                 (nextCommand (build-response "120000")))))))

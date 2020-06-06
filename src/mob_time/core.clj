@@ -9,9 +9,9 @@
 
 (defn nextCommand [body previous]
   (let [command (timeLeft body)]
-    (if (= command (:command previous))
+    (if (= command (:last previous))
            {:command nil :last command}
-           {:command command :last (:command previous)})))
+           {:command command :last command})))
 
 (defn clear []
   (->> (shell/sh "/bin/sh" "-c" "clear <  /dev/null") :out println))
